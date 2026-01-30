@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,7 @@ class PlayerData {
   }
 }
 
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -79,10 +81,11 @@ class _MyAppState extends State<MyApp> {
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               
+              CachedNetworkImage(imageUrl: "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/Aatrox.png", placeholder:(context, url) => CircularProgressIndicator()),
               // === Text Display Example ===
               Expanded(
                 child: Center(
