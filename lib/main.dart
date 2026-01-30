@@ -82,6 +82,7 @@ class _MyAppState extends State<MyApp> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              
               // === Text Display Example ===
               Expanded(
                 child: Center(
