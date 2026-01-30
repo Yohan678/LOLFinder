@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../models/player_data.dart';
+import '../services/riot_api_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,40 +10,8 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
-//Fetch data from API
-Future<PlayerData> fetchPlayerData(String userName, String userTag) async {
-    final response = await http.get(
-      Uri.parse(
-        'https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${userName}/${userTag}?api_key=${dotenv.env['API_KEY']}',
-      ),
-    );
 
-    if (response.statusCode == 200) {
-      return PlayerData.fromJson(jsonDecode(response.body));;
-    } else {
-      throw Exception('Failed to load data: ${response.statusCode}');
-    }
-  }
 
-class PlayerData {
-  final String puuid;
-  final String gameName;
-  final String tagLine;
-
-  const PlayerData({
-    required this.puuid,
-    required this.gameName,
-    required this.tagLine,
-  });
-
-  factory PlayerData.fromJson(Map<String, dynamic> json) {
-    return PlayerData(
-      puuid: json['puuid'] ?? '',
-      gameName: json['gameName'] ?? '',
-      tagLine: json['tagLine'] ?? '',
-    );
-  }
-}
 
 
 class MyApp extends StatefulWidget {
@@ -54,6 +22,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  PlayerData? playerData; //nullable
+  RiotApiService riotApi = RiotApiService();
+
   //use this controller to get what user typed
   final _nameTextController = TextEditingController(); //UN = UserName
   final _tagTextController = TextEditingController(); //UT = UserTag
@@ -79,13 +50,16 @@ class _MyAppState extends State<MyApp> {
         ),
 
         body: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               
-              CachedNetworkImage(imageUrl: "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/Aatrox.png", placeholder:(context, url) => CircularProgressIndicator()),
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: CachedNetworkImage(imageUrl: "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/Aatrox.png", placeholder:(context, url) => CircularProgressIndicator()),
+              ),
               // === Text Display Example ===
               Expanded(
                 child: Center(
@@ -180,7 +154,7 @@ class _MyAppState extends State<MyApp> {
                   child: Icon(Icons.search, color: Colors.white),
                   onPressed: () {
                     setState(() {
-                      _playerDataFuture = fetchPlayerData(
+                      _playerDataFuture = riotApi.fetchPlayerData(
                         _nameTextController.text,
                         _tagTextController.text
                       );
