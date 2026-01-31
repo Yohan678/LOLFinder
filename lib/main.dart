@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/player_data.dart';
+import '../models/match_id.dart';
 import '../services/riot_api_service.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
-
-
-
 
 
 class MyApp extends StatefulWidget {
@@ -22,8 +21,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  PlayerData? playerData; //nullable
-  RiotApiService riotApi = RiotApiService();
+
+  RiotApiService riotApiService = RiotApiService();
 
   //use this controller to get what user typed
   final _nameTextController = TextEditingController(); //UN = UserName
@@ -31,6 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   //Variable to store fetched player data
   Future<PlayerData>? _playerDataFuture;
+  Future<MatchId>? _matchIdFuture;
 
   //Store user input into variables
   String userName = '';
@@ -50,25 +50,24 @@ class _MyAppState extends State<MyApp> {
         ),
 
         body: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               
-              Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: CachedNetworkImage(imageUrl: "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/Aatrox.png", placeholder:(context, url) => CircularProgressIndicator()),
-              ),
+              CachedNetworkImage(imageUrl: "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/Aatrox.png", 
+              placeholder:(context, url) => CircularProgressIndicator()),
+              
               // === Text Display Example ===
               Expanded(
                 child: Center(
                   //FutureBuilder to handle async data fetching
-                  child: FutureBuilder<PlayerData> (
-                    future: _playerDataFuture,
+                  child: FutureBuilder<MatchId> (
+                    future: _matchIdFuture,
                     builder: (context, snapshot) {
                       //if user did not search yet
-                      if (_playerDataFuture == null) {
+                      if (_matchIdFuture == null) {
                         return Text('Search for a player!', style: TextStyle(fontSize: 24));
                       }
 
@@ -79,9 +78,9 @@ class _MyAppState extends State<MyApp> {
 
                       //if data is fetched successfully
                       if (snapshot.hasData) {
-                        final playerData = snapshot.data!;
+                        final matchId = snapshot.data!;
                         return Text(
-                          'User name is ${playerData.gameName} \nTag is ${playerData.tagLine} \nPUUID is ${playerData.puuid}',
+                          'Recent Match ID: ${matchId.listMatch.isNotEmpty ? matchId.listMatch[0] : "No matches found"}',
                           style: TextStyle(fontSize: 30),
                         );
                       }
@@ -154,10 +153,8 @@ class _MyAppState extends State<MyApp> {
                   child: Icon(Icons.search, color: Colors.white),
                   onPressed: () {
                     setState(() {
-                      _playerDataFuture = riotApi.fetchPlayerData(
-                        _nameTextController.text,
-                        _tagTextController.text
-                      );
+                      _matchIdFuture = riotApiService.fetchMatchIdExample(
+                        _nameTextController.text, _tagTextController.text);
                     });
                   }
                 )

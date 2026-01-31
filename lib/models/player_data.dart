@@ -11,9 +11,9 @@ class PlayerData {
 
   factory PlayerData.fromJson(Map<String, dynamic> json) {
     return PlayerData(
-      puuid: json['puuid'],
-      gameName: json['gameName'],
-      tagLine: json['tagLine'],
+      puuid: json['puuid'] ?? '',
+      gameName: json['gameName'] ?? '',
+      tagLine: json['tagLine'] ?? '',
     );
   }
 }

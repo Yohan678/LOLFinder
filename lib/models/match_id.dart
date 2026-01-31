@@ -7,7 +7,7 @@ class MatchId {
 
   factory MatchId.fromJson(Map<String, dynamic> json) {
     return MatchId(
-      listMatch
-    )
+      listMatch: List<String>.from(json['listMatch'] ?? []),
+    );
   }
 }
