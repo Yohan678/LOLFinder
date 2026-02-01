@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../models/player_data.dart';
+// import '../models/player_data.dart';
 import '../models/match_id.dart';
 import '../services/riot_api_service.dart';
+import '../models/champion_name.dart'; 
 
 
 Future<void> main() async {
@@ -29,8 +30,10 @@ class _MyAppState extends State<MyApp> {
   final _tagTextController = TextEditingController(); //UT = UserTag
 
   //Variable to store fetched player data
-  Future<PlayerData>? _playerDataFuture;
+  // Future<PlayerData>? _playerDataFuture;
   Future<MatchId>? _matchIdFuture;
+  Future<ChampionName>? _championNameFuture;
+
 
   //Store user input into variables
   String userName = '';
@@ -56,18 +59,15 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               
-              CachedNetworkImage(imageUrl: "https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/Aatrox.png", 
-              placeholder:(context, url) => CircularProgressIndicator()),
-              
               // === Text Display Example ===
               Expanded(
                 child: Center(
                   //FutureBuilder to handle async data fetching
-                  child: FutureBuilder<MatchId> (
-                    future: _matchIdFuture,
+                  child: FutureBuilder<ChampionName> (
+                    future: _championNameFuture,
                     builder: (context, snapshot) {
                       //if user did not search yet
-                      if (_matchIdFuture == null) {
+                      if (_championNameFuture == null) {
                         return Text('Search for a player!', style: TextStyle(fontSize: 24));
                       }
 
@@ -78,10 +78,19 @@ class _MyAppState extends State<MyApp> {
 
                       //if data is fetched successfully
                       if (snapshot.hasData) {
-                        final matchId = snapshot.data!;
-                        return Text(
-                          'Recent Match ID: ${matchId.listMatch.isNotEmpty ? matchId.listMatch[0] : "No matches found"}',
-                          style: TextStyle(fontSize: 30),
+                        final championName = snapshot.data!;
+                        return Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.all(30.0),
+                              child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${championName.championName}.png',
+                              placeholder: (context, url) => CircularProgressIndicator()),
+                            ),
+                          
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Last Played Champion: ${championName.championName}', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                            )
+                          ],
                         );
                       }
 
@@ -153,7 +162,7 @@ class _MyAppState extends State<MyApp> {
                   child: Icon(Icons.search, color: Colors.white),
                   onPressed: () {
                     setState(() {
-                      _matchIdFuture = riotApiService.fetchMatchIdExample(
+                      _championNameFuture = riotApiService.fetchChampionNameEX(
                         _nameTextController.text, _tagTextController.text);
                     });
                   }

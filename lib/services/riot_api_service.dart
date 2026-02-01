@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import models
 import '../models/player_data.dart';
 import '../models/match_id.dart';
+import '../models/champion_name.dart';
 
 
 class RiotApiService {
@@ -51,6 +52,45 @@ class RiotApiService {
       return MatchId(listMatch: jsonresponse.cast<String>());
     } else {
       throw Exception('Failed to load match IDs: ${matchResponse.statusCode}');
+    }
+  }
+
+  Future<ChampionName> fetchChampionNameEX(String userName, String userTag) async {
+    final accountResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/$userName/$userTag?api_key=${dotenv.env['API_KEY']}'),
+    );
+
+    if (accountResponse.statusCode != 200) {
+      throw Exception('Failed to load account data: ${accountResponse.statusCode}');
+    }
+
+    final playerData = PlayerData.fromJson(jsonDecode(accountResponse.body));
+    final playerUniqueId = playerData.puuid;
+
+    final matchResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/$playerUniqueId/ids?start=0&count=20&api_key=${dotenv.env['API_KEY']}'),
+    );
+
+    if (matchResponse.statusCode != 200) {
+      throw Exception('Failed to load match IDs: ${matchResponse.statusCode}');
+    }
+
+    final List<dynamic> matchIds = jsonDecode(matchResponse.body);
+    final firstMatchID = matchIds[0];
+
+    final matchDetailResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/$firstMatchID?api_key=${dotenv.env['API_KEY']}'));
+
+    if (matchDetailResponse.statusCode == 200) {
+      final matchDetailJson = jsonDecode(matchDetailResponse.body);
+      final participants = matchDetailJson['info']['participants'] as List<dynamic>;
+
+      for (var participant in participants) {
+        if (participant['puuid'] == playerUniqueId) {
+          final championName = participant['championName'];
+          return ChampionName(championName: championName);
+        }
+      }
+      throw Exception('Champion not found for the player in the match.');
+    } else {
+      throw Exception('Failed to load match details: ${matchDetailResponse.statusCode}');
     }
   }
 }
