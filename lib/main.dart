@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lol_finder/screens/main_appbar.dart';
 // import '../models/player_data.dart';
-import '../models/match_id.dart';
+// import '../../models/match_id.dart';
 import '../services/riot_api_service.dart';
 import '../models/champion_name.dart'; 
 
@@ -31,7 +32,7 @@ class _MyAppState extends State<MyApp> {
 
   //Variable to store fetched player data
   // Future<PlayerData>? _playerDataFuture;
-  Future<MatchId>? _matchIdFuture;
+  // Future<MatchId>? _matchIdFuture;
   Future<List<ChampionName>>? _championNameFuture;
 
 
@@ -48,8 +49,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.lightBlue,
-          title: Text("Find your LOL profiles!"),
+          elevation: 50,
+          backgroundColor: Color.fromARGB(255, 19, 36, 64),
+          title: Text("Find summoner's recent games",
+          style: TextStyle(color: Colors.white)),
         ),
 
         body: Padding(
@@ -91,13 +94,17 @@ class _MyAppState extends State<MyApp> {
                               margin: const EdgeInsets.all(10),
                               height: 100,
                               decoration: BoxDecoration(
-                                color: game.win ? Color.fromARGB(255, 255, 52, 52) : Color.fromARGB(255, 66, 99, 245),
+                                color: game.win ? Color.fromARGB(180, 255, 52, 52) : Color.fromARGB(180, 66, 99, 245),
                                 borderRadius: BorderRadius.circular(15)
                               ),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${game.championName}.png'),
+                                  
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${game.championName}.png'),
+                                  ),
                                   
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.center,
