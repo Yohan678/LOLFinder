@@ -78,22 +78,37 @@ class _MyAppState extends State<MyApp> {
 
                       //if data is fetched successfully
                       if (snapshot.hasData) {
-                        final championData = snapshot.data!;
+                        final data = snapshot.data!;
                         return Column(children: [
                             Padding(
                               padding: const EdgeInsets.all(30.0),
-                              child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${championData.championName}.png',
+                              child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${data.championName}.png',
                               placeholder: (context, url) => CircularProgressIndicator()),
                             ),
                           
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Last Played Champion: ${championData.championName}', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                              child: Text('Last Played Champion: ${data.championName}', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
                             ),
 
-                            Padding(padding: const EdgeInsets.all(8.0),
-                              child: Text('K/D/A \n${championData.kills}/${championData.deaths}/${championData.assists}') 
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: data.win ? Color.fromARGB(0, 255, 52, 52) : Color.fromARGB(0, 66, 99, 245),
+                                      ),
+                                      child: Text("Kill/Death/Assist\n${data.kills}/${data.deaths}/${data.assists}"),
+                                      ),
+                                  )
+                                ]
+                              )
                             ),
+                            // Padding(padding: const EdgeInsets.all(8.0),
+                            //   child: Text('K/D/A \n${championData.kills}/${championData.deaths}/${championData.assists}') 
+                            // ),
                           ],
                         );
                       }

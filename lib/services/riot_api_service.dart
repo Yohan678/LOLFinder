@@ -75,6 +75,7 @@ class RiotApiService {
 
     final List<dynamic> matchIds = jsonDecode(matchResponse.body);
     final firstMatchID = matchIds[0];
+    print(matchIds[0]);
 
     final matchDetailResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/$firstMatchID?api_key=${dotenv.env['API_KEY']}'));
 
@@ -88,12 +89,14 @@ class RiotApiService {
           final kills = participant['kills'];
           final deaths = participant['deaths'];
           final assists = participant['assists'];
+          final win = participant['win'];
           print('champion name: $championName, kills: $kills, deaths: $deaths, assists: $assists');
           return ChampionName(
             championName: championName,
             kills: kills,
             deaths: deaths,
             assists: assists,
+            win: win,
           );
         }
       }
