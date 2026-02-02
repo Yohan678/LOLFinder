@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
   //Variable to store fetched player data
   // Future<PlayerData>? _playerDataFuture;
   Future<MatchId>? _matchIdFuture;
-  Future<ChampionName>? _championNameFuture;
+  Future<List<ChampionName>>? _championNameFuture;
 
 
   //Store user input into variables
@@ -63,7 +63,7 @@ class _MyAppState extends State<MyApp> {
               Expanded(
                 child: Center(
                   //FutureBuilder to handle async data fetching
-                  child: FutureBuilder<ChampionName> (
+                  child: FutureBuilder<List<ChampionName>> (
                     future: _championNameFuture,
                     builder: (context, snapshot) {
                       //if user did not search yet
@@ -78,39 +78,41 @@ class _MyAppState extends State<MyApp> {
 
                       //if data is fetched successfully
                       if (snapshot.hasData) {
-                        final data = snapshot.data!;
-                        return Column(children: [
-                            Padding(
-                              padding: const EdgeInsets.all(30.0),
-                              child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${data.championName}.png',
-                              placeholder: (context, url) => CircularProgressIndicator()),
-                            ),
-                          
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Last Played Champion: ${data.championName}', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                            ),
+                        final List<ChampionName> data = snapshot.data!;
+                        if (data.isEmpty) {
+                          return Text('zero data found');
+                        }
 
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
+                        return ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder:  (context, index) {
+                            final game = data[index];
+                            return Container(
+                              margin: const EdgeInsets.all(10),
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: game.win ? Color.fromARGB(255, 255, 52, 52) : Color.fromARGB(255, 66, 99, 245),
+                                borderRadius: BorderRadius.circular(15)
+                              ),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: data.win ? Color.fromARGB(0, 255, 52, 52) : Color.fromARGB(0, 66, 99, 245),
-                                      ),
-                                      child: Text("Kill/Death/Assist\n${data.kills}/${data.deaths}/${data.assists}"),
-                                      ),
+                                  CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${game.championName}.png'),
+                                  
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(game.championName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
+
+                                      Text('${game.kills}/${game.deaths}/${game.assists}')
+                                    ]
                                   )
                                 ]
                               )
-                            ),
-                            // Padding(padding: const EdgeInsets.all(8.0),
-                            //   child: Text('K/D/A \n${championData.kills}/${championData.deaths}/${championData.assists}') 
-                            // ),
-                          ],
-                        );
+                             );
+                          }
+                          
+                          );
                       }
 
                       //if there is error

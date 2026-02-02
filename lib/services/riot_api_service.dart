@@ -46,7 +46,6 @@ class RiotApiService {
     );
 
     if (matchResponse.statusCode == 200) {
-      print(matchResponse.body);
       final List<dynamic> jsonresponse = jsonDecode(matchResponse.body);
 
       return MatchId(listMatch: jsonresponse.cast<String>());
@@ -55,7 +54,7 @@ class RiotApiService {
     }
   }
 
-  Future<ChampionName> fetchChampionNameEX(String userName, String userTag) async {
+  Future<List<ChampionName>> fetchChampionNameEX(String userName, String userTag) async {
     final accountResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/$userName/$userTag?api_key=${dotenv.env['API_KEY']}'),
     );
 
@@ -74,35 +73,56 @@ class RiotApiService {
     }
 
     final List<dynamic> matchIds = jsonDecode(matchResponse.body);
-    final firstMatchID = matchIds[0];
-    print(matchIds[0]);
+    final List<ChampionName> matchData = [];
 
-    final matchDetailResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/$firstMatchID?api_key=${dotenv.env['API_KEY']}'));
+    for (int i = 0; i < 5; i++ ) {
+      final matchdetailresponseEx = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/${matchIds[i]}?api_key=${dotenv.env['API_KEY']}'));
 
-    if (matchDetailResponse.statusCode == 200) {
-      final matchDetailJson = jsonDecode(matchDetailResponse.body);
-      final participants = matchDetailJson['info']['participants'] as List<dynamic>;
+      if (matchdetailresponseEx.statusCode == 200) {
+        final matchdetailjsonEx = jsonDecode(matchdetailresponseEx.body);
+        final participants = matchdetailjsonEx['info']['participants'] as List<dynamic>;
 
-      for (var participant in participants) {
-        if (participant['puuid'] == playerUniqueId) {
-          final championName = participant['championName'];
-          final kills = participant['kills'];
-          final deaths = participant['deaths'];
-          final assists = participant['assists'];
-          final win = participant['win'];
-          print('champion name: $championName, kills: $kills, deaths: $deaths, assists: $assists');
-          return ChampionName(
-            championName: championName,
-            kills: kills,
-            deaths: deaths,
-            assists: assists,
-            win: win,
-          );
+        for (var participant in participants) {
+          if (participant['puuid'] == playerUniqueId) {
+            final championName = participant['championName'];
+            final kills = participant['kills'];
+            final deaths = participant['deaths'];
+            final assists = participant['assists'];
+            final win = participant['win'];
+            var champ = ChampionName(championName: championName, kills: kills, deaths: deaths, assists: assists, win: win);
+            matchData.add(champ);
+          }
         }
       }
-      throw Exception('Champion not found for the player in the match.');
-    } else {
-      throw Exception('Failed to load match details: ${matchDetailResponse.statusCode}');
     }
+    return matchData;
   }
-}
+    // final firstMatchID = matchIds[0];
+
+    // final matchDetailResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/$firstMatchID?api_key=${dotenv.env['API_KEY']}'));
+
+    // if (matchDetailResponse.statusCode == 200) {
+    //   final matchDetailJson = jsonDecode(matchDetailResponse.body);
+    //   final participants = matchDetailJson['info']['participants'] as List<dynamic>;
+
+    //   for (var participant in participants) {
+    //     if (participant['puuid'] == playerUniqueId) {
+    //       final championName = participant['championName'];
+    //       final kills = participant['kills'];
+    //       final deaths = participant['deaths'];
+    //       final assists = participant['assists'];
+    //       final win = participant['win'];
+    //       return ChampionName(
+    //         championName: championName,
+    //         kills: kills,
+    //         deaths: deaths,
+    //         assists: assists,
+    //         win: win,
+    //       );
+    //     }
+    //   }
+    //   throw Exception('Champion not found for the player in the match.');
+    // } else {
+    //   throw Exception('Failed to load match details: ${matchDetailResponse.statusCode}');
+    // }
+  }
