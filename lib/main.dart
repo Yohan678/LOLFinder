@@ -78,25 +78,29 @@ class _MyAppState extends State<MyApp> {
 
                       //if data is fetched successfully
                       if (snapshot.hasData) {
-                        final championName = snapshot.data!;
+                        final championData = snapshot.data!;
                         return Column(children: [
                             Padding(
                               padding: const EdgeInsets.all(30.0),
-                              child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${championName.championName}.png',
+                              child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${championData.championName}.png',
                               placeholder: (context, url) => CircularProgressIndicator()),
                             ),
                           
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Last Played Champion: ${championName.championName}', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                            )
+                              child: Text('Last Played Champion: ${championData.championName}', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                            ),
+
+                            Padding(padding: const EdgeInsets.all(8.0),
+                              child: Text('K/D/A \n${championData.kills}/${championData.deaths}/${championData.assists}') 
+                            ),
                           ],
                         );
                       }
 
                       //if there is error
                       if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
+                        return Text('Error: this is${snapshot.error}');
                       }
 
                       //default value

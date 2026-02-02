@@ -85,7 +85,16 @@ class RiotApiService {
       for (var participant in participants) {
         if (participant['puuid'] == playerUniqueId) {
           final championName = participant['championName'];
-          return ChampionName(championName: championName);
+          final kills = participant['kills'];
+          final deaths = participant['deaths'];
+          final assists = participant['assists'];
+          print('champion name: $championName, kills: $kills, deaths: $deaths, assists: $assists');
+          return ChampionName(
+            championName: championName,
+            kills: kills,
+            deaths: deaths,
+            assists: assists,
+          );
         }
       }
       throw Exception('Champion not found for the player in the match.');

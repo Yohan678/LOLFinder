@@ -1,13 +1,22 @@
 class ChampionName {
   final String championName;
+  final int kills;
+  final int deaths;
+  final int assists;
 
   const ChampionName({
-    required this.championName,
+    required this.championName, 
+    required this.kills,
+    required this.deaths,
+    required this.assists,
   });
 
   factory ChampionName.fromJson(Map<String, dynamic> json) {
     return ChampionName(
       championName: json['championName'] ?? '',
+      kills: json['kills'] as int,
+      deaths: json['deaths'] as int,
+      assists: json['assists'] as int,
     );
   }
 }
