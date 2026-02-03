@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:lol_finder/screens/main_appbar.dart';
 // import '../models/player_data.dart';
 // import '../../models/match_id.dart';
 import '../services/riot_api_service.dart';
@@ -47,12 +46,14 @@ class _MyAppState extends State<MyApp> {
     final double screenWidth = screenSize.width;
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          elevation: 50,
+          elevation: 20,
+          shadowColor: Colors.black,
           backgroundColor: Color.fromARGB(255, 19, 36, 64),
           title: Text("Find summoner's recent games",
-          style: TextStyle(color: Colors.white)),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ),
 
         body: Padding(
@@ -91,10 +92,11 @@ class _MyAppState extends State<MyApp> {
                           itemBuilder:  (context, index) {
                             final game = data[index];
                             return Container(
-                              margin: const EdgeInsets.all(10),
+                              margin: EdgeInsets.all(3),
+                              width: screenWidth,
                               height: 100,
-                              decoration: BoxDecoration(
-                                color: game.win ? Color.fromARGB(180, 255, 52, 52) : Color.fromARGB(180, 66, 99, 245),
+                              decoration: BoxDecoration( //Color.fromARGB(180, 66, 99, 245)
+                                color: game.win ? Color.fromARGB(180, 66, 99, 245) : Color.fromARGB(180, 255, 52, 52),
                                 borderRadius: BorderRadius.circular(15)
                               ),
                               child: Row(
@@ -106,13 +108,28 @@ class _MyAppState extends State<MyApp> {
                                     child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/champion/${game.championName}.png'),
                                   ),
                                   
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text(game.championName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
-
-                                      Text('${game.kills}/${game.deaths}/${game.assists}')
-                                    ]
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(game.championName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold), textAlign: TextAlign.left,),
+                                    
+                                        Text('${game.kills}/${game.deaths}/${game.assists}', textAlign: TextAlign.left),
+                                    
+                                        Text(
+                                          switch(game.queueId) {
+                                            420 => 'SOLO RANKED',
+                                            440 => 'FLEX RANKED',
+                                            490 => 'NORMAL',
+                                            400 => 'NORMAL (BLIND)',
+                                            450 => 'ARAM',
+                                            1700 => 'ARENA',
+                                            _ => 'Unknown Game Mode'                  
+                                          }, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w200),
+                                        )
+                                      ]
+                                    ),
                                   )
                                 ]
                               )
