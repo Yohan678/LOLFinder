@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //import models
 import '../models/player_data.dart';
 import '../models/champion_name.dart';
+import '../models/summoner.dart';
 
 
 class RiotApiService {
@@ -56,4 +58,27 @@ class RiotApiService {
     return matchData;
   }
 
+  Future<Summoner> fetchSummonerIconId(String userName, String userTag) async {
+    final accountResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/$userName/$userTag?api_key=${dotenv.env['API_KEY']}'),);
+
+    if (accountResponse.statusCode != 200) {
+      throw Exception('Failed to load account data: ${accountResponse.statusCode}');
+    }
+
+    final playerData = PlayerData.fromJson(jsonDecode(accountResponse.body));
+    final playerUniqueId = playerData.puuid;
+
+    final summonerResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/$playerUniqueId'));
+
+    if (summonerResponse.statusCode == 200) {
+      final summonerInfo = jsonDecode(summonerResponse.body);
+      final profileIconId = summonerInfo['profileIconId'];
+      var summonerId = Summoner(profileIconId: profileIconId);
+      return summonerId;
+    } else {
+      throw Exception('Failed to find summoner data: ${summonerResponse.statusCode}');
+    }
+
+
+  }
 }
