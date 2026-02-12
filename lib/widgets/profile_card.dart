@@ -4,7 +4,15 @@ import 'package:lol_finder/models/summoner.dart';
 
 class ProfileCard extends StatelessWidget {
   final Summoner summoner;
-  const ProfileCard({super.key, required this.summoner});
+  final String userName;
+  final String userTag;
+
+  const ProfileCard({
+    super.key, 
+    required this.summoner,
+    required this.userName,
+    required this.userTag,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +28,7 @@ class ProfileCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(padding: const EdgeInsets.all(10), //DDragon url needed to be changed
-          child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/icon/${summoner.profileIconId}.png',
+          child: CachedNetworkImage(imageUrl: 'https://ddragon.leagueoflegends.com/cdn/16.2.1/img/profileicon/${summoner.profileIconId}.png',
           errorWidget: (context, url, error) => Icon(Icons.error),)
           ),
 
@@ -29,7 +37,11 @@ class ProfileCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text()
+                Text(userName,
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+
+                Text(userTag,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
               ]
             )
           )

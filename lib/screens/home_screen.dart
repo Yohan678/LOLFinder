@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lol_finder/services/riot_api_service.dart';
 import 'package:lol_finder/models/champion_name.dart';
+import 'package:lol_finder/models/summoner.dart';
+import 'package:lol_finder/widgets/profile_card.dart';
 import 'package:lol_finder/widgets/match_card.dart';
 import 'package:lol_finder/widgets/player_search_form.dart';
+import 'package:lol_finder/models/combined_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,11 +22,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final _tagTextController = TextEditingController();
 
   //Variable to store fetched player data
-  Future<List<ChampionName>>? _championNameFuture;
+  Future<CombinedData>? _combinedDataFuture;
 
   void _onSearch() {
     setState(() {
-      _championNameFuture = _riotApiService.fetchChampionNameEX(_nameTextController.text, _tagTextController.text);
+      _combinedDataFuture = _riotApiService.fetchCombinedData(_nameTextController.text, _tagTextController.text);
     });
   }
 
@@ -43,33 +46,44 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            
             // === Results Displaying Section ===
             Expanded (
               child: Center(
-                child: FutureBuilder<List<ChampionName>> (
-                  future: _championNameFuture,
+                child: FutureBuilder<CombinedData> (
+                  future: _combinedDataFuture,
                   builder: (context, snapshot) {
-                    
                     //User not searched yet
-                    if (_championNameFuture == null) return Text('Search for a summoner!', style: TextStyle(fontSize: 24));
-
+                    if (_combinedDataFuture == null) return Text('Search for a summoner!', style: TextStyle(fontSize: 24));
                     //Data Loading
                     if (snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
-
                     //Error
                     if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
-                    //Successfully fetched data
+                    // === Successfully fetched data ===
                     if (snapshot.hasData) {
-                      final List<ChampionName> data = snapshot.data!;
-                      if(data.isEmpty) return Text('zero data found');
+                      final Summoner summonerData = snapshot.data!.summonerData;
+                      final List<ChampionName> matchDataList = snapshot.data!.matchData;
 
-                      return ListView.builder (
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          return MatchCard(game: data[index]);
-                        }
+                      // === Recent Match List View ===
+                      if(matchDataList.isEmpty) return Text('zero data found');
+
+                      return Column(
+                        children: [
+                          ProfileCard(
+                            summoner: summonerData,
+                            userName: _nameTextController.text,
+                            userTag: _tagTextController.text,
+                          ),
+
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: matchDataList.length,
+                              itemBuilder: (context, index) {
+                                return MatchCard(game: matchDataList[index]);
+                              }
+                            )
+                          )
+                        ]
                       );
                     }
                     //Default Value

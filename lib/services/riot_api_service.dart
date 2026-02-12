@@ -1,84 +1,67 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //import models
-import '../models/player_data.dart';
 import '../models/champion_name.dart';
 import '../models/summoner.dart';
+import '../models/combined_data.dart';
 
 
 class RiotApiService {
-  
-  Future<List<ChampionName>> fetchChampionNameEX(String userName, String userTag) async {
-    final accountResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/$userName/$userTag?api_key=${dotenv.env['API_KEY']}'),
-    );
+  Future<CombinedData> fetchCombinedData(String userName, String userTag) async {
+    try {// === Account Data - Account V1 ===
+    final accountResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/$userName/$userTag?api_key=${dotenv.env['API_KEY']}'));
 
-    if (accountResponse.statusCode != 200) {
-      throw Exception('Failed to load account data: ${accountResponse.statusCode}');
-    }
+    if (accountResponse.statusCode != 200) throw Exception('Failed to load account data: ${accountResponse.statusCode}');
 
-    final playerData = PlayerData.fromJson(jsonDecode(accountResponse.body));
-    final playerUniqueId = playerData.puuid;
+    final accountData = jsonDecode(accountResponse.body);
+    final String puuid = accountData['puuid'];
 
-    final matchResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/$playerUniqueId/ids?start=0&count=20&api_key=${dotenv.env['API_KEY']}'),
-    );
+    // === Match ID Data - Match V5 ===
+    final matchIdResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/$puuid/ids?start=0&count=20&api_key=${dotenv.env['API_KEY']}'));
 
-
-    if (matchResponse.statusCode != 200) {
-      throw Exception('Failed to load match IDs: ${matchResponse.statusCode}');
-    }
-
-    final List<dynamic> matchIds = jsonDecode(matchResponse.body);
+    if (matchIdResponse.statusCode != 200) throw Exception('Failed to load match id data: ${matchIdResponse.statusCode}');
     
-    final List<ChampionName> matchData = [];
+    final List<dynamic> matchIdsData = jsonDecode(matchIdResponse.body);
+    final List<ChampionName> matchDataList = [];
 
-    for (int i = 0; i < matchIds.length; i++ ) {
-      final matchdetailresponseEx = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/${matchIds[i]}?api_key=${dotenv.env['API_KEY']}'));
+    for (int i = 0; i < matchIdsData.length; i++) {
+      final matchDetailReponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/match/v5/matches/${matchIdsData[i]}?api_key=${dotenv.env['API_KEY']}'));
 
-      if (matchdetailresponseEx.statusCode == 200) {
-        final matchdetailjsonEx = jsonDecode(matchdetailresponseEx.body);
-        final participants = matchdetailjsonEx['info']['participants'] as List<dynamic>;
-        final queueId = matchdetailjsonEx['info']['queueId'];
+      if (matchDetailReponse.statusCode == 200) {
+        final matchDetailJson = jsonDecode(matchDetailReponse.body);
+        final participants = matchDetailJson['info']['participants'] as List<dynamic>;
+        final queueId = matchDetailJson['info']['queueId'];
 
         for (var participant in participants) {
-          if (participant['puuid'] == playerUniqueId) {
+          if (participant['puuid'] == puuid) {
             final championName = participant['championName'];
             final kills = participant['kills'];
             final deaths = participant['deaths'];
             final assists = participant['assists'];
             final win = participant['win'];
             var champ = ChampionName(championName: championName, kills: kills, deaths: deaths, assists: assists, win: win, queueId: queueId);
-            matchData.add(champ);
+            matchDataList.add(champ);
           }
         }
       }
     }
-    return matchData;
-  }
 
-  Future<Summoner> fetchSummonerIconId(String userName, String userTag) async {
-    final accountResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/$userName/$userTag?api_key=${dotenv.env['API_KEY']}'),);
+    // === Summoner Data - Summoner V4 ===
+    final summonerResponse = await http.get(Uri.parse('https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/$puuid?api_key=${dotenv.env['API_KEY']}'));
+    final summonerData = Summoner.fromJson(jsonDecode(summonerResponse.body));
 
-    if (accountResponse.statusCode != 200) {
-      throw Exception('Failed to load account data: ${accountResponse.statusCode}');
+    return CombinedData(
+      accountData: accountData, 
+      matchData: matchDataList, 
+      summonerData: summonerData
+    );
+
+    } catch (e) {
+      print('Error fetching data: $e');
+      rethrow;
     }
+  } 
 
-    final playerData = PlayerData.fromJson(jsonDecode(accountResponse.body));
-    final playerUniqueId = playerData.puuid;
-
-    final summonerResponse = await http.get(Uri.parse('https://americas.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/$playerUniqueId'));
-
-    if (summonerResponse.statusCode == 200) {
-      final summonerInfo = jsonDecode(summonerResponse.body);
-      final profileIconId = summonerInfo['profileIconId'];
-      var summonerId = Summoner(profileIconId: profileIconId);
-      return summonerId;
-    } else {
-      throw Exception('Failed to find summoner data: ${summonerResponse.statusCode}');
-    }
-
-
-  }
 }
