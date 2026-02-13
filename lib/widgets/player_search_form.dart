@@ -41,14 +41,17 @@ class PlayerSearchForm extends StatelessWidget {
             Text("#", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey)),
             SizedBox(width: 10),
 
-            SizedBox (
-              width: 80,
-              child: TextField(
-                controller: tagController,
-                decoration: InputDecoration(
-                  hintText: 'NA1',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsetsGeometry.symmetric(horizontal: 10),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox (
+                width: 80,
+                child: TextField(
+                  controller: tagController,
+                  decoration: InputDecoration(
+                    hintText: 'NA1',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsetsGeometry.symmetric(horizontal: 10),
+                  ),
                 ),
               ),
             ),
