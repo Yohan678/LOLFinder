@@ -25,7 +25,7 @@ class MatchCard extends StatelessWidget {
       margin: EdgeInsets.all(3.0),
       height: 100,
       decoration: BoxDecoration(
-        color: game.win ? Color.fromARGB(180, 66, 99, 245) : Color.fromARGB(180, 255, 52, 52),
+        color: game.win ? Color(0xFF1E40AF) : Color(0xFF7F1D1D),
         borderRadius: BorderRadius.circular(15)
       ),
 
@@ -44,16 +44,17 @@ class MatchCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(game.championName,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFF1F5F9))),
 
                 Text(
                   '${game.kills}/${game.deaths}/${game.assists}',
-                  textAlign: TextAlign.left
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: Color(0xFFF1F5F9))
                 ),
 
                 Text(
                   _getQueueType(game.queueId),
-                  style: TextStyle(fontSize: 8, fontWeight: FontWeight.w300),
+                  style: TextStyle(fontSize: 8, fontWeight: FontWeight.w300, color: Color(0xFF94A3B8)),
                 )
 
               ],

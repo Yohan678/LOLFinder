@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
 
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: const Color.fromARGB(255, 19, 36, 64),
+        primaryColor: const Color(0xFF0F172A),
         useMaterial3: true,
       ),
 

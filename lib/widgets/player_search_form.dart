@@ -20,7 +20,7 @@ class PlayerSearchForm extends StatelessWidget {
         SizedBox(height: 20),
         Text(
           "Search Player",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFF1F5F9)),
         ),
 
         SizedBox(height: 10),
@@ -28,6 +28,7 @@ class PlayerSearchForm extends StatelessWidget {
           children: [
             Expanded(
               child: TextField(
+                style: TextStyle(color: Color(0xFFF1F5F9)),
                 controller: nameController,
                 decoration: InputDecoration(
                   hintText: 'Summoner Name',
@@ -38,7 +39,7 @@ class PlayerSearchForm extends StatelessWidget {
             ),
 
             SizedBox(width: 10),
-            Text("#", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey)),
+            Text("#", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF94A3B8))),
             SizedBox(width: 10),
 
             Padding(
@@ -47,6 +48,7 @@ class PlayerSearchForm extends StatelessWidget {
                 width: 80,
                 child: TextField(
                   controller: tagController,
+                  style: TextStyle(color: Color(0xFFF1F5F9)),
                   decoration: InputDecoration(
                     hintText: 'NA1',
                     border: OutlineInputBorder(),
@@ -64,7 +66,7 @@ class PlayerSearchForm extends StatelessWidget {
           label: Text("Search"),
           style: ElevatedButton.styleFrom(
             minimumSize: Size(double.infinity, 50),
-            backgroundColor: Colors.blue,
+            backgroundColor: Color(0xFF3B82F6),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)
             )

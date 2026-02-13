@@ -33,10 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(200, 19, 36, 64),
+      backgroundColor: Color(0xFF0F172A),
       appBar: AppBar(
         title: Text("Summoner's History"),
-        backgroundColor: Color.fromARGB(255, 19, 36, 64),
+        backgroundColor: Color(0xFF0F172A),
         foregroundColor: Colors.white,
       ),
 

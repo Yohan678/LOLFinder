@@ -20,7 +20,7 @@ class ProfileCard extends StatelessWidget {
       margin: EdgeInsets.all(3.0),
       height: 150,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: Color(0xFF1E293B),
         borderRadius: BorderRadius.circular(10)
       ),
 
@@ -38,10 +38,10 @@ class ProfileCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(userName,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFFF1F5F9))),
 
                 Text(userTag,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200, color: Color(0xFF94A3B8))),
               ]
             )
           )
