@@ -19,9 +19,18 @@ class MatchCard extends StatelessWidget {
     };
   }
 
+  String _formatDuration(int totalSeconds) {
+    final duration = Duration(seconds: totalSeconds);
+    final minutes = duration.inMinutes;
+    final seconds = totalSeconds % 60;
+
+    final minutesString = '$minutes'.padLeft(2, '0');
+    final secondsString = '$seconds'.padLeft(2, '0');
+    return '$minutesString:$secondsString';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final gameDurationMinute = game.gameDuration / 60;
     final gmaeEndTimeStampDate = DateTime.fromMillisecondsSinceEpoch(game.gameEndTimeStamp);
     return Container(
       margin: EdgeInsets.all(3.0),
@@ -64,7 +73,8 @@ class MatchCard extends StatelessWidget {
           ),
 
           Text(
-            "$gameDurationDate",
+            _formatDuration(game.gameDuration),
+            style: TextStyle(color: Color(0xFFF1F5F9), fontSize: 8, fontWeight: FontWeight.w200)
           )
         ],
       )
