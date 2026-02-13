@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lol_finder/screens/search_screen.dart';
 import 'screens/home_screen.dart';
 
 
@@ -30,7 +31,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
 
-      home: const HomeScreen(),
+      home: const SearchScreen(),
     );
   }
 }
