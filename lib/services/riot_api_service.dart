@@ -33,6 +33,9 @@ class RiotApiService {
         final matchDetailJson = jsonDecode(matchDetailReponse.body);
         final participants = matchDetailJson['info']['participants'] as List<dynamic>;
         final queueId = matchDetailJson['info']['queueId'];
+        print("Duration Check: ${matchDetailJson['info']?['gameDuration']}");
+        final gameDuration = matchDetailJson['info']?['gameDuration'];
+        final gameEndTimeStamp = matchDetailJson['info']?['gameEndTimestamp'];
 
         for (var participant in participants) {
           if (participant['puuid'] == puuid) {
@@ -41,7 +44,16 @@ class RiotApiService {
             final deaths = participant['deaths'];
             final assists = participant['assists'];
             final win = participant['win'];
-            var champ = ChampionName(championName: championName, kills: kills, deaths: deaths, assists: assists, win: win, queueId: queueId);
+            var champ = ChampionName(
+              championName: championName, 
+              kills: kills, 
+              deaths: deaths, 
+              assists: assists, 
+              win: win, 
+              queueId: queueId,
+              gameDuration: gameDuration,
+              gameEndTimeStamp: gameEndTimeStamp,
+              );
             matchDataList.add(champ);
           }
         }

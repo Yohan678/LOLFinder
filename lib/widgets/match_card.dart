@@ -21,6 +21,8 @@ class MatchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final gameDurationMinute = game.gameDuration / 60;
+    final gmaeEndTimeStampDate = DateTime.fromMillisecondsSinceEpoch(game.gameEndTimeStamp);
     return Container(
       margin: EdgeInsets.all(3.0),
       height: 100,
@@ -60,6 +62,10 @@ class MatchCard extends StatelessWidget {
               ],
             ),
           ),
+
+          Text(
+            "$gameDurationDate",
+          )
         ],
       )
     );

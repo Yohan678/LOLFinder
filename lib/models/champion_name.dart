@@ -1,3 +1,4 @@
+//Match Detail Informations
 class ChampionName {
   final String championName;
   final int kills;
@@ -5,6 +6,8 @@ class ChampionName {
   final int assists;
   final bool win;
   final int queueId;
+  final int gameDuration;
+  final int gameEndTimeStamp;
 
   const ChampionName({
     required this.championName, 
@@ -13,6 +16,8 @@ class ChampionName {
     required this.assists,
     required this.win,
     required this.queueId,
+    required this.gameDuration,
+    required this.gameEndTimeStamp
   });
 
   factory ChampionName.fromJson(Map<String, dynamic> json) {
@@ -23,6 +28,8 @@ class ChampionName {
       assists: json['assists'] as int,
       win: json['win'],
       queueId: json['queueId'] ?? 0,
+      gameDuration: json['gameDuration'] ?? 0,
+      gameEndTimeStamp: json['gameEndTimeStamp'] ?? 0,
     );
   }
 }
