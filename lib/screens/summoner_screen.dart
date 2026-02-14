@@ -88,6 +88,7 @@ class _SummonerScreenState extends State<SummonerScreen> {
                             summoner: summonerData,
                             userName: widget.userName,
                             userTag: widget.userTag,
+                            summonerLevel: summonerData.summonerLevel,
                           ),
 
                           Expanded(

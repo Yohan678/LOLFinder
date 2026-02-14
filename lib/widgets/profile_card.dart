@@ -6,12 +6,14 @@ class ProfileCard extends StatelessWidget {
   final Summoner summoner;
   final String userName;
   final String userTag;
+  final int summonerLevel;
 
   const ProfileCard({
     super.key, 
     required this.summoner,
     required this.userName,
     required this.userTag,
+    required this.summonerLevel
     });
 
   @override
@@ -37,6 +39,10 @@ class ProfileCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'LV $summonerLevel',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w200, color: Color(0xFFF1F5F9))
+                ),
                 Text(userName,
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFFF1F5F9))),
 

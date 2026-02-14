@@ -73,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             summoner: summonerData,
                             userName: _nameTextController.text,
                             userTag: _tagTextController.text,
+                            summonerLevel: summonerData.summonerLevel,
                           ),
 
                           Expanded(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lol_finder/models/champion_name.dart';
 
+import 'package:intl/intl.dart';
+
 class MatchCard extends StatelessWidget {
   final ChampionName game;
 
@@ -31,7 +33,10 @@ class MatchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gmaeEndTimeStampDate = DateTime.fromMillisecondsSinceEpoch(game.gameEndTimeStamp);
+    DateFormat dateFormat = DateFormat("yyyy/MM/dd");
+    final gameEndTimeStampDate = DateTime.fromMillisecondsSinceEpoch(game.gameEndTimeStamp);
+    String convertedEndTime = dateFormat.format(gameEndTimeStampDate);
+    
     return Container(
       margin: EdgeInsets.all(3.0),
       height: 100,
@@ -72,9 +77,21 @@ class MatchCard extends StatelessWidget {
             ),
           ),
 
-          Text(
-            _formatDuration(game.gameDuration),
-            style: TextStyle(color: Color(0xFFF1F5F9), fontSize: 8, fontWeight: FontWeight.w200)
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                Text(
+                  _formatDuration(game.gameDuration),
+                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12, fontWeight: FontWeight.w200)
+                ),
+
+                Text(
+                  convertedEndTime,
+                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 8, fontWeight: FontWeight.w200)
+                )
+              ],
+            ),
           )
         ],
       )
